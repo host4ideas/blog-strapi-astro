@@ -1,14 +1,10 @@
 import type Author from "./author";
 import type Category from "./category";
 import type Image from "./image";
+import type Media from "./media";
 import type Quote from "./quote";
-
-interface Component {
-    media: Image | null;
-    quote: Quote | null;
-    slider: Image[] | null;
-    richText: string | null;
-}
+import type { RichText } from "./rich_text";
+import type Slider from "./slider";
 
 export default interface Article {
     id: number;
@@ -29,9 +25,7 @@ export default interface Article {
         createdAt: string;
         updatedAt: string;
         publishedAt: string;
-        blocks: {
-            components: Component[] | null;
-        };
+        blocks: (Media | Slider | RichText | Quote)[] | null;
     };
 }
 

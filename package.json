@@ -7,7 +7,8 @@
     "setup:backend": "cd backend && yarn",
     "setup": "yarn install && yarn setup:frontend && yarn setup:backend",
     "dev": "concurrently \"cd frontend && yarn dev\" \"cd backend && yarn develop\"",
-    "repo:upstream": "git fetch upstream && git merge upstream/main"
+    "repo:upstream": "git fetch upstream && git merge upstream/main",
+    "build": "concurrently \"cd frontend && yarn build\" \"cd backend && yarn build\""
   },
   "dependencies": {
     "concurrently": "^7.6.0"

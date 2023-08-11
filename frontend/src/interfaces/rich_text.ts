@@ -1,6 +1,5 @@
-export default interface Quote {
+export interface RichText {
     id: number;
     __component: string;
-    title: string;
     body: string;
 }

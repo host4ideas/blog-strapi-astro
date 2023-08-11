@@ -1,12 +1,18 @@
 ---
 import fetchApi from "../../lib/strapi";
-import type Post from "../../interfaces/article";
+import type Article from "../../interfaces/article";
 import BlogPost from "../../layouts/BlogPost.astro";
 
 export async function getStaticPaths() {
-    const posts = await fetchApi<Post[]>({
-        endpoint: "posts",
-        wrappedByKey: "data",
+    const query: Record<string, string> = {
+        "populate[0]": "cover.attributes",
+        "populate[1]": "categories",
+    };
+
+    const posts = await fetchApi<Article[]>({
+        endpoint: "articles", // the content type to fetch
+        wrappedByKey: "data", // the key to unwrap the response
+        query: query,
     });
 
     return posts.map((post) => ({
@@ -14,7 +20,8 @@ export async function getStaticPaths() {
         props: post,
     }));
 }
-type Props = Post;
+
+type Props = Article;
 
 const post = Astro.props;
 ---
