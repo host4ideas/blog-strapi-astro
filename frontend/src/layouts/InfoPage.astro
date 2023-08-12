@@ -7,9 +7,9 @@ import FormattedDate from "../components/FormattedDate.astro";
 type Props = {
     title: string;
     description: string;
-    image: string;
-    publishedAt: Date | string;
-    updatedAt: Date | string;
+    image: string | null;
+    publishedAt: Date | string | null;
+    updatedAt: Date | string | null;
 };
 
 const {
@@ -21,6 +21,7 @@ const {
 } = Astro.props;
 ---
 
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <BaseHead title={title} description={description} />
@@ -79,11 +80,19 @@ const {
                 <div class="prose">
                     <div class="title">
                         <div class="date">
-                            <FormattedDate date={publishedAt} />
-                            <div class="last-updated-on">
-                                Last updated on{" "}
-                                <FormattedDate date={updatedAt} />
-                            </div>
+                            {
+                                publishedAt && (
+                                    <FormattedDate date={publishedAt} />
+                                )
+                            }
+                            {
+                                updatedAt && (
+                                    <div class="last-updated-on">
+                                        Last updated on{" "}
+                                        <FormattedDate date={updatedAt} />
+                                    </div>
+                                )
+                            }
                         </div>
                         <h1>{title}</h1>
                         <hr />

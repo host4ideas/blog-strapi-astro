@@ -1,27 +1,46 @@
-import type { ImageStrapiFormat } from "../interfaces/image";
+import { ImageStrapiFormat } from "../interfaces/image";
 import type Image from "../interfaces/image";
 import { getStrapiURL } from "./api";
+
+const resolveUrl = (image: Image, format: ImageStrapiFormat): string | null => {
+    let url: string | undefined;
+    let formatData = image.attributes.formats[format];
+
+    if (formatData) {
+        url = formatData.url;
+    }
+
+    // Try with all formats until an url is found
+    if (!formatData) {
+        url = Object.keys(ImageStrapiFormat).map((key) => {
+            formatData = image.attributes.formats[key as ImageStrapiFormat];
+            if (formatData) return formatData.url;
+        })[0];
+    }
+
+    if (url) {
+        return url.startsWith("/") ? getStrapiURL(url) : url;
+    }
+
+    return null;
+};
 
 export const getImageUrls = (
     format: ImageStrapiFormat,
     imgs: Image[] | null
-): string[] | null => {
+): (string | null)[] | null => {
     if (!imgs || imgs.length < 1) return null;
 
     return imgs.map((image) => {
-        const { url } = image.attributes.formats[format];
-        const imageUrl = url.startsWith("/") ? getStrapiURL(url) : url;
-        return imageUrl;
+        return resolveUrl(image, format);
     });
 };
 
 export const getImageUrl = (
     format: ImageStrapiFormat,
-    img: Image | null
+    image: Image | null
 ): string | null => {
-    if (!img) return null;
+    if (!image) return null;
 
-    const { url } = img.attributes.formats[format];
-    const imageUrl = url.startsWith("/") ? getStrapiURL(url) : url;
-    return imageUrl;
+    return resolveUrl(image, format);
 };

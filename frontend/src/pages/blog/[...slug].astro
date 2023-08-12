@@ -6,6 +6,8 @@ import { BlockType } from "../../interfaces/block";
 import { getImageUrl, getImageUrls } from "../../lib/image";
 import { ImageStrapiFormat } from "../../interfaces/image";
 import Slider from "../../components/Slider.astro";
+import marked from "marked";
+import DOMPurify from "isomorphic-dompurify";
 
 export async function getStaticPaths() {
     const query: Record<string, string> = {
@@ -15,11 +17,17 @@ export async function getStaticPaths() {
         "populate[3]": "blocks.files",
     };
 
-    const posts = await fetchApi<Article[]>({
-        endpoint: "articles", // the content type to fetch
-        wrappedByKey: "data", // the key to unwrap the response
-        query: query,
-    });
+    let posts: Article[] = [];
+
+    try {
+        posts = await fetchApi<Article[]>({
+            endpoint: "articles", // the content type to fetch
+            wrappedByKey: "data", // the key to unwrap the response
+            query: query,
+        });
+    } catch (error: any) {
+        console.error("Unable to fetch articles: " + error.message);
+    }
 
     return posts.map((post) => ({
         params: { slug: post.attributes.slug },
@@ -39,6 +47,7 @@ const { blocks } = post.attributes;
         {
             blocks?.map((block) => {
                 if (block.__component === BlockType.MEDIA) {
+                    // Single image
                     return (
                         <img
                             width={1020}
@@ -51,6 +60,7 @@ const { blocks } = post.attributes;
                         />
                     );
                 } else if (block.__component === BlockType.SLIDER) {
+                    // Slider of images
                     return (
                         <Slider
                             urls={getImageUrls(
@@ -60,9 +70,23 @@ const { blocks } = post.attributes;
                         />
                     );
                 } else if (block.__component === BlockType.RICH_TEXT) {
-                    return <div>{block.body}</div>;
+                    // Text content (markdown) from Strapi
+                    return (
+                        <div
+                            set:html={DOMPurify.sanitize(
+                                marked.parse(block.body)
+                            )}
+                        />
+                    );
                 } else if (block.__component === BlockType.QUOTE) {
-                    return <div>{block.body}</div>;
+                    // Quote (markdown content) from Strapi
+                    return (
+                        <div
+                            set:html={DOMPurify.sanitize(
+                                marked.parse(block.body)
+                            )}
+                        />
+                    );
                 }
             })
         }

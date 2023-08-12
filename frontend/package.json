@@ -14,6 +14,11 @@
     "@astrojs/rss": "^2.4.4",
     "@astrojs/sitemap": "^2.0.1",
     "astro": "^2.10.3",
+    "isomorphic-dompurify": "^1.8.0",
+    "marked": "^7.0.2",
     "swiper": "^10.1.0"
+  },
+  "devDependencies": {
+    "@types/dompurify": "^3.0.2"
   }
 }

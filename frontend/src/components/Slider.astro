@@ -1,39 +1,10 @@
 ---
 interface Props {
-    urls: string[] | null;
+    urls: (string | null)[] | null;
 }
 
 const { urls } = Astro.props;
 ---
-
-<!-- Swiper -->
-<swiper-container
-    class="mySwiper"
-    zoom="true"
-    pagination-clickable="true"
-    pagination="true"
-    navigation="true"
-    keyboard="true"
-    mousewheel="true"
-    space-between="30"
-    slides-per-view="auto"
-    style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff"
->
-    {
-        urls?.map((url) => (
-            <swiper-slide lazy="true">
-                <div class="swiper-zoom-container">
-                    <img loading="lazy" width={100} src={url} alt="" />
-                </div>
-            </swiper-slide>
-        ))
-    }
-</swiper-container>
-
-<script
-    is:inline
-    src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-element-bundle.min.js"
-></script>
 
 <style>
     swiper-container {
@@ -57,3 +28,35 @@ const { urls } = Astro.props;
         object-fit: cover;
     }
 </style>
+
+<!-- Swiper -->
+<swiper-container
+    class="mySwiper"
+    zoom="true"
+    pagination-clickable="true"
+    pagination="true"
+    navigation="true"
+    keyboard="true"
+    mousewheel="true"
+    space-between="30"
+    slides-per-view="auto"
+    style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff"
+>
+    {
+        urls?.map((url) => {
+            if (url)
+                return (
+                    <swiper-slide>
+                        <div class="swiper-zoom-container">
+                            <img width={100} src={url} alt="" />
+                        </div>
+                    </swiper-slide>
+                );
+        })
+    }
+</swiper-container>
+
+<script
+    is:inline
+    src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-element-bundle.min.js"
+></script>

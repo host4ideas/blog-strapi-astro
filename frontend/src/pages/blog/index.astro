@@ -1,134 +1,76 @@
 ---
-import BaseHead from "../../components/BaseHead.astro";
-import Header from "../../components/Header.astro";
-import Footer from "../../components/Footer.astro";
 import { SITE_TITLE, SITE_DESCRIPTION } from "../../consts";
 import FormattedDate from "../../components/FormattedDate.astro";
 import type Article from "../../interfaces/article";
 import fetchApi from "../../lib/strapi";
 import { getImageUrl } from "../../lib/image";
 import { ImageStrapiFormat } from "../../interfaces/image";
+import GridPage from "../../layouts/GridPage.astro";
+import type Category from "../../interfaces/category";
 
-// TODO: fetch media in [slug] page
-const query: Record<string, string> = {
+const queryPosts: Record<string, string> = {
     "populate[0]": "cover.attributes",
     "populate[1]": "categories",
 };
 
-const posts = await fetchApi<Article[]>({
-    endpoint: "articles", // the content type to fetch
-    wrappedByKey: "data", // the key to unwrap the response
-    query: query,
-});
+let posts: Article[] | undefined;
+let categories: Category[] | undefined;
+
+try {
+    posts = await fetchApi<Article[]>({
+        endpoint: "articles", // the content type to fetch
+        wrappedByKey: "data", // the key to unwrap the response
+        query: queryPosts,
+    });
+
+    categories = await fetchApi<Category[]>({
+        endpoint: "categories", // the content type to fetch
+        wrappedByKey: "data", // the key to unwrap the response
+    });
+} catch (error: any) {
+    console.error("Unable to fetch articles: " + error.message);
+}
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-        <style>
-            main {
-                width: 960px;
-            }
-            ul {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 2rem;
-                list-style-type: none;
-                margin: 0;
-                padding: 0;
-            }
-            ul li {
-                width: calc(50% - 1rem);
-            }
-            ul li * {
-                text-decoration: none;
-                transition: 0.2s ease;
-            }
-            ul li:first-child {
-                width: 100%;
-                margin-bottom: 1rem;
-                text-align: center;
-            }
-            ul li:first-child img {
-                width: 40%;
-            }
-            ul li:first-child .title {
-                font-size: 2.369rem;
-            }
-            ul li img {
-                margin-bottom: 0.5rem;
-                border-radius: 12px;
-            }
-            ul li a {
-                display: block;
-            }
-            .title {
-                margin: 0;
-                color: rgb(var(--black));
-                line-height: 1;
-            }
-            .date {
-                margin: 0;
-                color: rgb(var(--gray));
-            }
-            ul li a:hover h4,
-            ul li a:hover .date {
-                color: rgb(var(--accent));
-            }
-            ul a:hover img {
-                box-shadow: var(--box-shadow);
-            }
-            @media (max-width: 720px) {
-                ul {
-                    gap: 0.5em;
+<GridPage title={SITE_TITLE} description={SITE_DESCRIPTION}>
+    <div class="prose">
+        <div class="title">
+            <h1>{SITE_TITLE}</h1>
+            <div class="date">
+                <span> |</span>
+                {
+                    categories?.map((category) => (
+                        <>
+                            <a href={`/categories/${category.attributes.slug}`}>
+                                {category.attributes.name}
+                            </a>
+                            <span> | </span>
+                        </>
+                    ))
                 }
-                ul li {
-                    width: 100%;
-                    text-align: center;
-                }
-                ul li:first-child {
-                    margin-bottom: 0;
-                }
-                ul li:first-child .title {
-                    font-size: 1.563em;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <Header />
-        <main>
-            <section>
-                <ul>
-                    {
-                        posts.map((post) => (
-                            <li>
-                                <a href={`/blog/${post.attributes.slug}/`}>
-                                    <img
-                                        width={1020}
-                                        height={510}
-                                        src={getImageUrl(
-                                            ImageStrapiFormat.LARGE,
-                                            post.attributes.cover.data
-                                        )}
-                                        alt=""
-                                    />
-                                    <h4 class="title">
-                                        {post.attributes.title}
-                                    </h4>
-                                    <p class="date">
-                                        <FormattedDate
-                                            date={post.attributes.publishedAt}
-                                        />
-                                    </p>
-                                </a>
-                            </li>
-                        ))
-                    }
-                </ul>
-            </section>
-        </main>
-        <Footer />
-    </body>
-</html>
+            </div>
+        </div>
+        <hr />
+    </div>
+    {
+        posts?.map((post) => (
+            <li>
+                <a href={`/blog/${post.attributes.slug}/`}>
+                    <img
+                        width={1020}
+                        height={510}
+                        src={getImageUrl(
+                            ImageStrapiFormat.LARGE,
+                            post.attributes.cover.data
+                        )}
+                        alt=""
+                    />
+                    <h4 class="title">{post.attributes.title}</h4>
+                    <p class="date">
+                        <FormattedDate date={post.attributes.publishedAt} />
+                    </p>
+                </a>
+            </li>
+        ))
+    }
+</GridPage>

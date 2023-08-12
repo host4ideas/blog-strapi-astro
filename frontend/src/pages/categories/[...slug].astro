@@ -1,0 +1,78 @@
+---
+import fetchApi from "../../lib/strapi";
+import type Category from "../../interfaces/category";
+import { ImageStrapiFormat } from "../../interfaces/image";
+import FormattedDate from "../../components/FormattedDate.astro";
+import { getImageUrl } from "../../lib/image";
+import GridPage from "../../layouts/GridPage.astro";
+
+export async function getStaticPaths() {
+    // This query is using: strapi-plugin-populate-deep
+    const query: Record<string, string> = {
+        populate: "deep,3",
+    };
+
+    let categories: Category[] = [];
+
+    try {
+        categories = await fetchApi<Category[]>({
+            endpoint: "categories", // the content type to fetch
+            wrappedByKey: "data", // the key to unwrap the response
+            query: query,
+        });
+    } catch (error: any) {
+        console.error("Unable to fetch categories: " + error.message);
+    }
+
+    return categories.map((category) => ({
+        params: { slug: category.attributes.slug },
+        props: category,
+    }));
+}
+
+type Props = Category;
+
+const category = Astro.props;
+
+const { articles, updatedAt, createdAt, name } = category.attributes;
+---
+
+<GridPage title="Categories" description="Categories page">
+    <div class="prose">
+        <div class="title">
+            <h1>{name}</h1>
+            <!-- <div class="date">
+                {createdAt && <FormattedDate date={createdAt} />}
+                {
+                    updatedAt && (
+                        <div class="last-updated-on">
+                            Last updated on <FormattedDate date={updatedAt} />
+                        </div>
+                    )
+                }
+            </div> -->
+        </div>
+        <hr />
+    </div>
+    {
+        articles.data?.map((article) => (
+            <li>
+                <a href={`/blog/${article.attributes.slug}/`}>
+                    <img
+                        width={1200}
+                        height={810}
+                        src={getImageUrl(
+                            ImageStrapiFormat.LARGE,
+                            article.attributes.cover.data
+                        )}
+                        alt=""
+                    />
+                    <h4 class="title">{article.attributes.title}</h4>
+                    <p class="date">
+                        <FormattedDate date={article.attributes.publishedAt} />
+                    </p>
+                </a>
+            </li>
+        ))
+    }
+</GridPage>

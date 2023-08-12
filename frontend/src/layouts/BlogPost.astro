@@ -24,6 +24,7 @@ const {
 } = attributes;
 ---
 
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <BaseHead title={title} description={excerpt} />
@@ -63,6 +64,10 @@ const {
                 margin-bottom: 0.5em;
                 color: rgb(var(--gray));
             }
+            .categories {
+                margin-bottom: 0.5em;
+                color: rgb(var(--gray));
+            }
             .last-updated-on {
                 font-style: italic;
             }
@@ -92,6 +97,22 @@ const {
                                         <FormattedDate date={updatedAt} />
                                     </div>
                                 )
+                            }
+                        </div>
+                        <div class="categories">
+                            Categories: | {
+                                categories.data.map((category) => {
+                                    return (
+                                        <>
+                                            <a
+                                                href={`/categories/${category.attributes.slug}`}
+                                            >
+                                                {category.attributes.name}
+                                            </a>
+                                            <span> | </span>
+                                        </>
+                                    );
+                                })
                             }
                         </div>
                         <h1>{title}</h1>

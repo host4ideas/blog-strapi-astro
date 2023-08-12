@@ -35,9 +35,9 @@
     },
     "categories": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "manyToMany",
       "target": "api::category.category",
-      "mappedBy": "article"
+      "inversedBy": "articles"
     },
     "blocks": {
       "type": "dynamiczone",
@@ -50,9 +50,9 @@
     },
     "authors": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "manyToMany",
       "target": "api::author.author",
-      "mappedBy": "article"
+      "mappedBy": "articles"
     },
     "readingTime": {
       "type": "string"
