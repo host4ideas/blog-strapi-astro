@@ -13,7 +13,8 @@
   "pluginOptions": {},
   "attributes": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "avatar": {
       "type": "media",
@@ -26,7 +27,8 @@
       ]
     },
     "email": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "bio": {
       "type": "text"

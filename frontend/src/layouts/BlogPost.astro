@@ -65,11 +65,12 @@ const {
                 color: rgb(var(--gray));
             }
             .categories {
-                margin-bottom: 0.5em;
+                margin-bottom: 2rem;
                 color: rgb(var(--gray));
             }
             .last-updated-on {
                 font-style: italic;
+                margin: 5px;
             }
         </style>
     </head>
@@ -89,7 +90,7 @@ const {
                 <div class="prose">
                     <div class="title">
                         <div class="date">
-                            <FormattedDate date={publishedAt} />
+                            Posted on <FormattedDate date={publishedAt} />
                             {
                                 updatedAt && (
                                     <div class="last-updated-on">

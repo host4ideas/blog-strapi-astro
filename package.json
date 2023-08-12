@@ -11,7 +11,6 @@
     "build": "concurrently \"cd frontend && yarn build\" \"cd backend && yarn build\""
   },
   "dependencies": {
-    "@types/dompurify": "^3.0.2",
     "concurrently": "^7.6.0"
   }
 }

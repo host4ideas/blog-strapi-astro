@@ -5,6 +5,8 @@ import { ImageStrapiFormat } from "../../interfaces/image";
 import FormattedDate from "../../components/FormattedDate.astro";
 import { getImageUrl } from "../../lib/image";
 import GridPage from "../../layouts/GridPage.astro";
+import { marked } from "marked";
+import DOMPurify from "isomorphic-dompurify";
 
 export async function getStaticPaths() {
     // This query is using: strapi-plugin-populate-deep
@@ -34,23 +36,33 @@ type Props = Category;
 
 const category = Astro.props;
 
-const { articles, updatedAt, createdAt, name } = category.attributes;
+const { articles, updatedAt, createdAt, name, description } =
+    category.attributes;
 ---
 
 <GridPage title="Categories" description="Categories page">
     <div class="prose">
         <div class="title">
             <h1>{name}</h1>
-            <!-- <div class="date">
-                {createdAt && <FormattedDate date={createdAt} />}
+            <div class="date">
+                <!-- {createdAt && <FormattedDate date={createdAt} />}
                 {
                     updatedAt && (
                         <div class="last-updated-on">
                             Last updated on <FormattedDate date={updatedAt} />
                         </div>
                     )
+                } -->
+                {
+                    description && (
+                        <div
+                            set:html={DOMPurify.sanitize(
+                                marked.parse(description)
+                            )}
+                        />
+                    )
                 }
-            </div> -->
+            </div>
         </div>
         <hr />
     </div>
