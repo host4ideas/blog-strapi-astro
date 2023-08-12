@@ -1,54 +1,47 @@
 ---
-import Swiper from "swiper";
-import { Navigation, Pagination } from "swiper/modules";
-// import Swiper and modules styles
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+interface Props {
+    urls: string[] | null;
+}
 
-const swiper = new Swiper(".mySwiper", {
-    modules: [Navigation, Pagination],
-    slidesPerView: 1,
-    spaceBetween: 30,
-    keyboard: {
-        enabled: true,
-    },
-    pagination: {
-        el: ".swiper-pagination",
-        clickable: true,
-    },
-    navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev",
-    },
-});
+const { urls } = Astro.props;
 ---
 
 <!-- Swiper -->
-<div class="swiper mySwiper">
-    <div class="swiper-wrapper">
-        <div class="swiper-slide">Slide 1</div>
-        <div class="swiper-slide">Slide 2</div>
-        <div class="swiper-slide">Slide 3</div>
-        <div class="swiper-slide">Slide 4</div>
-        <div class="swiper-slide">Slide 5</div>
-        <div class="swiper-slide">Slide 6</div>
-        <div class="swiper-slide">Slide 7</div>
-        <div class="swiper-slide">Slide 8</div>
-        <div class="swiper-slide">Slide 9</div>
-    </div>
-    <div class="swiper-button-next"></div>
-    <div class="swiper-button-prev"></div>
-    <div class="swiper-pagination"></div>
-</div>
+<swiper-container
+    class="mySwiper"
+    zoom="true"
+    pagination-clickable="true"
+    pagination="true"
+    navigation="true"
+    keyboard="true"
+    mousewheel="true"
+    space-between="30"
+    slides-per-view="auto"
+    style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff"
+>
+    {
+        urls?.map((url) => (
+            <swiper-slide lazy="true">
+                <div class="swiper-zoom-container">
+                    <img loading="lazy" width={100} src={url} alt="" />
+                </div>
+            </swiper-slide>
+        ))
+    }
+</swiper-container>
+
+<script
+    is:inline
+    src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-element-bundle.min.js"
+></script>
 
 <style>
-    .swiper {
+    swiper-container {
         width: 100%;
         height: 100%;
     }
 
-    .swiper-slide {
+    swiper-slide {
         text-align: center;
         font-size: 18px;
         background: #fff;
@@ -57,7 +50,7 @@ const swiper = new Swiper(".mySwiper", {
         align-items: center;
     }
 
-    .swiper-slide img {
+    swiper-slide img {
         display: block;
         width: 100%;
         height: 100%;

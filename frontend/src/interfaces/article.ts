@@ -1,10 +1,7 @@
 import type Author from "./author";
+import type { Media, Quote, RichText, Slider } from "./block";
 import type Category from "./category";
 import type Image from "./image";
-import type Media from "./media";
-import type Quote from "./quote";
-import type { RichText } from "./rich_text";
-import type Slider from "./slider";
 
 export default interface Article {
     id: number;

@@ -4,11 +4,11 @@ import { getStrapiURL } from "./api";
 
 export const getImageUrls = (
     format: ImageStrapiFormat,
-    data: Image[] | null
+    imgs: Image[] | null
 ): string[] | null => {
-    if (!data || data.length < 1) return null;
+    if (!imgs || imgs.length < 1) return null;
 
-    return data.map((image) => {
+    return imgs.map((image) => {
         const { url } = image.attributes.formats[format];
         const imageUrl = url.startsWith("/") ? getStrapiURL(url) : url;
         return imageUrl;
@@ -17,11 +17,11 @@ export const getImageUrls = (
 
 export const getImageUrl = (
     format: ImageStrapiFormat,
-    data: Image | null
+    img: Image | null
 ): string | null => {
-    if (!data) return null;
+    if (!img) return null;
 
-    const { url } = data.attributes.formats[format];
+    const { url } = img.attributes.formats[format];
     const imageUrl = url.startsWith("/") ? getStrapiURL(url) : url;
     return imageUrl;
 };

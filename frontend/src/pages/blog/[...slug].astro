@@ -2,11 +2,17 @@
 import fetchApi from "../../lib/strapi";
 import type Article from "../../interfaces/article";
 import BlogPost from "../../layouts/BlogPost.astro";
+import { BlockType } from "../../interfaces/block";
+import { getImageUrl, getImageUrls } from "../../lib/image";
+import { ImageStrapiFormat } from "../../interfaces/image";
+import Slider from "../../components/Slider.astro";
 
 export async function getStaticPaths() {
     const query: Record<string, string> = {
         "populate[0]": "cover.attributes",
         "populate[1]": "categories",
+        "populate[2]": "blocks.file",
+        "populate[3]": "blocks.files",
     };
 
     const posts = await fetchApi<Article[]>({
@@ -24,6 +30,41 @@ export async function getStaticPaths() {
 type Props = Article;
 
 const post = Astro.props;
+
+const { blocks } = post.attributes;
 ---
 
-<BlogPost {...post} />
+<BlogPost {...post}>
+    <div>
+        {
+            blocks?.map((block) => {
+                if (block.__component === BlockType.MEDIA) {
+                    return (
+                        <img
+                            width={1020}
+                            height={510}
+                            src={getImageUrl(
+                                ImageStrapiFormat.LARGE,
+                                block.file.data
+                            )}
+                            alt=""
+                        />
+                    );
+                } else if (block.__component === BlockType.SLIDER) {
+                    return (
+                        <Slider
+                            urls={getImageUrls(
+                                ImageStrapiFormat.LARGE,
+                                block.files.data
+                            )}
+                        />
+                    );
+                } else if (block.__component === BlockType.RICH_TEXT) {
+                    return <div>{block.body}</div>;
+                } else if (block.__component === BlockType.QUOTE) {
+                    return <div>{block.body}</div>;
+                }
+            })
+        }
+    </div>
+</BlogPost>
